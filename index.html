@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fanning Godfrey - Author</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: fixed;
+        }
+        
+        body {
+            background-color: #020609;
+            color: #ffffff;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            transition: background-color 0.5s ease;
+        }
+        
+        .main-layout {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 0;
+            z-index: 5;
+        }
+        
+        .left-column {
+            display: flex;
+            align-items: flex-end;
+            height: 100%;
+        }
+        
+        .book-cover {
+            height: 100vh;
+            width: auto;
+            object-fit: contain;
+            object-position: bottom;
+            display: block;
+        }
+        
+        .right-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 2rem;
+            gap: 1rem;
+            height: 100%;
+            align-items: flex-start;
+        }
+        
+        .author-name {
+            font-size: 2.5rem;
+            font-weight: 900;
+            font-stretch: condensed;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        
+        .socials {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .social-link {
+            color: #ffffff;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 900;
+            font-stretch: condensed;
+            font-size: 1rem;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .social-link:hover {
+            opacity: 1;
+        }
+        
+        .fireflies-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 10;
+        }
+        
+        .firefly {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px 4px rgba(255, 255, 255, 0.9);
+            animation: brightness-waver 2s ease-in-out infinite;
+        }
+        
+        @keyframes brightness-waver {
+            0%, 100% {
+                opacity: 0.2;
+                box-shadow: 0 0 8px 3px rgba(255, 255, 255, 0.6);
+            }
+            25% {
+                opacity: 0.9;
+                box-shadow: 0 0 16px 6px rgba(255, 255, 255, 1);
+            }
+            50% {
+                opacity: 0.4;
+                box-shadow: 0 0 10px 4px rgba(255, 255, 255, 0.7);
+            }
+            75% {
+                opacity: 1;
+                box-shadow: 0 0 18px 7px rgba(255, 255, 255, 1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="fireflies-container" id="fireflies"></div>
+    <div class="main-layout">
+        <div class="left-column">
+            <img src="Fanning-Godfrey-front.jpg" alt="Fanning Godfrey Book Cover" class="book-cover">
+        </div>
+        <div class="right-column">
+            <h1 class="author-name">Fanning</h1>
+            <div class="socials">
+                <!-- Social links will be added here -->
+            </div>
+        </div>
+    </div>
+    <script>
+        // Extract book cover background color
+        const bookImage = new Image();
+        bookImage.crossOrigin = 'anonymous';
+        bookImage.src = 'Fanning-Godfrey-front.jpg';
+        
+        bookImage.onload = function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = this.width;
+            canvas.height = this.height;
+            ctx.drawImage(this, 0, 0);
+            
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const pixels = imageData.data;
+            const colorMap = {};
+            
+            // Sample pixels to find mode color (most common)
+            for (let i = 0; i < pixels.length; i += 16) { // Sample every 4th pixel
+                const r = pixels[i];
+                const g = pixels[i + 1];
+                const b = pixels[i + 2];
+                // Round to nearest 5 to group similar colors
+                const rRound = Math.round(r / 5) * 5;
+                const gRound = Math.round(g / 5) * 5;
+                const bRound = Math.round(b / 5) * 5;
+                const colorKey = `${rRound},${gRound},${bRound}`;
+                colorMap[colorKey] = (colorMap[colorKey] || 0) + 1;
+            }
+            
+            // Find most common color
+            let maxCount = 0;
+            let modeColor = '0,0,0';
+            for (const [color, count] of Object.entries(colorMap)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    modeColor = color;
+                }
+            }
+            
+            const [r, g, b] = modeColor.split(',').map(Number);
+            const hexColor = '#' + [r, g, b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+            
+            document.body.style.backgroundColor = hexColor;
+        };
+        
+        // Create fireflies with ember-like movement
+        const firefliesContainer = document.getElementById('fireflies');
+        const fireflyCount = 100;
+        
+        function getViewportDimensions() {
+            return {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+        }
+        
+        function createFirefly() {
+            const firefly = document.createElement('div');
+            firefly.className = 'firefly';
+            
+            const vp = getViewportDimensions();
+            
+            // Spawn from top/right/top-right area
+            const spawnArea = Math.random();
+            let startX, startY;
+            
+            if (spawnArea < 0.33) {
+                // Top edge
+                startX = Math.random() * vp.width;
+                startY = -10;
+            } else if (spawnArea < 0.66) {
+                // Right edge
+                startX = vp.width + 10;
+                startY = Math.random() * (vp.height * 0.3);
+            } else {
+                // Top-right corner area
+                startX = vp.width * 0.7 + Math.random() * (vp.width * 0.3);
+                startY = -10 + Math.random() * (vp.height * 0.2);
+            }
+            
+            // Target: bottom-left area
+            const endX = -50 - Math.random() * 100;
+            const endY = vp.height + 50 + Math.random() * 100;
+            
+            // Calculate distance for consistent speed
+            const distanceX = endX - startX;
+            const distanceY = endY - startY;
+            const totalDistance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+            
+            // Random size variation (bigger)
+            const size = 4 + Math.random() * 4;
+            firefly.style.width = size + 'px';
+            firefly.style.height = size + 'px';
+            
+            // Random animation duration (ember fall speed)
+            const duration = 8 + Math.random() * 12; // 8-20 seconds
+            
+            // Random delay
+            const delay = Math.random() * 3;
+            
+            // Set initial position using viewport coordinates
+            firefly.style.left = startX + 'px';
+            firefly.style.top = startY + 'px';
+            
+            // Create unique ember path with sinusoidal movement
+            const animationName = `ember-${Math.random().toString(36).substr(2, 9)}`;
+            
+            // Parameters for sinusoidal drift (wind effect)
+            const horizontalAmplitude = 40 + Math.random() * 60; // Side-to-side drift
+            const verticalAmplitude = 20 + Math.random() * 30; // Up-down variation
+            const frequency1 = 0.3 + Math.random() * 0.4; // Primary wave frequency
+            const frequency2 = 0.6 + Math.random() * 0.5; // Secondary wave frequency
+            
+            const style = document.createElement('style');
+            const keyframeSteps = 20; // More steps for smoother animation
+            let keyframeText = '@keyframes ' + animationName + ' {\n';
+            
+            for (let i = 0; i <= keyframeSteps; i++) {
+                const progress = i / keyframeSteps;
+                
+                // Linear movement toward bottom-left
+                const x = startX + (distanceX * progress);
+                const y = startY + (distanceY * progress);
+                
+                // Add sinusoidal drift for ember-like movement
+                const driftX = Math.sin(progress * Math.PI * 2 * frequency1) * horizontalAmplitude * progress;
+                const driftY = Math.sin(progress * Math.PI * 4 * frequency2) * verticalAmplitude * progress;
+                
+                // Calculate final position relative to start
+                const finalX = x + driftX - startX;
+                const finalY = y + driftY - startY;
+                
+                keyframeText += `  ${progress * 100}% {\n`;
+                keyframeText += `    transform: translate(${finalX}px, ${finalY}px);\n`;
+                keyframeText += `  }\n`;
+            }
+            keyframeText += '}';
+            
+            style.textContent = keyframeText;
+            document.head.appendChild(style);
+            
+            // Random brightness waver duration (independent from movement)
+            const brightnessDuration = 1.5 + Math.random() * 1.5;
+            firefly.style.animation = `${animationName} ${duration}s linear ${delay}s forwards, brightness-waver ${brightnessDuration}s ease-in-out infinite`;
+            
+            firefliesContainer.appendChild(firefly);
+            
+            // Remove firefly after animation completes
+            setTimeout(() => {
+                if (firefly.parentNode) {
+                    firefly.remove();
+                }
+            }, (duration + delay) * 1000);
+        }
+        
+        // Create initial fireflies
+        for (let i = 0; i < fireflyCount; i++) {
+            setTimeout(() => createFirefly(), i * 200);
+        }
+        
+        // Continuously create new fireflies
+        setInterval(() => {
+            const existingFireflies = firefliesContainer.children.length;
+            if (existingFireflies < fireflyCount) {
+                createFirefly();
+            }
+        }, 500);
+        
+        // Handle window resize - recreate fireflies with new viewport dimensions
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                firefliesContainer.innerHTML = '';
+                for (let i = 0; i < fireflyCount; i++) {
+                    setTimeout(() => createFirefly(), i * 100);
+                }
+            }, 250);
+        });
+    </script>
+</body>
+</html>
+
