@@ -68,6 +68,42 @@
             font-stretch: condensed;
             letter-spacing: -0.02em;
             margin: 0;
+            text-decoration: underline;
+        }
+        
+        .author-email {
+            font-size: 1rem;
+            font-weight: 900;
+            font-stretch: condensed;
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        
+        .author-email:hover {
+            opacity: 1;
+        }
+        
+        .amazon-link {
+            font-size: 1rem;
+            font-weight: 900;
+            font-stretch: condensed;
+            color: #ffffff;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            margin-top: 0.5rem;
+        }
+        
+        .amazon-link:hover {
+            opacity: 1;
+        }
+        
+        .book-cover-link {
+            display: block;
+            height: 100vh;
         }
         
         .socials {
@@ -136,12 +172,19 @@
     <div class="fireflies-container" id="fireflies"></div>
     <div class="main-layout">
         <div class="left-column">
-            <img src="Fanning-Godfrey-front.jpg" alt="Fanning Godfrey Book Cover" class="book-cover">
+            <a href="https://www.amazon.com/dp/B0G4BC36JY" target="_blank" class="book-cover-link">
+                <img src="Fanning-Godfrey-front.jpg" alt="Fanning Godfrey Book Cover" class="book-cover">
+            </a>
         </div>
         <div class="right-column">
             <h1 class="author-name">Fanning</h1>
             <div class="socials">
-                <!-- Social links will be added here -->
+                <a href="mailto:fanningauthor@outlook.com" class="social-link">Email Address (fanningauthor@outlook.com)</a>
+                <a href="https://www.amazon.com/dp/B0G4BC36JY" target="_blank" class="social-link">Amazon (Buy the book)</a>
+                <a href="https://www.tiktok.com/@fanningauthor" target="_blank" class="social-link">TikTok (@fanningauthor)</a>
+                <a href="https://www.instagram.com/fanningauthor/?next=%2F" target="_blank" class="social-link">Instagram (@fanningauthor)</a>
+                <a href="https://www.facebook.com/profile.php?id=61584369896123" target="_blank" class="social-link">Facebook</a>
+                <a href="https://www.reddit.com/notifications" target="_blank" class="social-link">Reddit</a>
             </div>
         </div>
     </div>
